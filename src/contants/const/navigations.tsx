@@ -3,7 +3,6 @@ import {
   Home,
   LineChart,
   Package,
-  Package2,
   ShoppingCart,
   Users,
 } from "lucide-react";
