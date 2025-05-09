@@ -2,18 +2,14 @@
 
 import * as React from "react";
 import {
-  AudioWaveform,
   BookOpen,
-  Bot,
-  ChevronsUpDown,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
+  GraduationCap,
+  LayoutDashboard,
+  MessageSquare,
   Settings2,
-  SquareTerminal,
+  SquareStack,
 } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import { NavMain } from "@/components/features/nav-main";
 import { NavProjects } from "@/components/features/nav-projects";
@@ -27,133 +23,9 @@ import {
 } from "@/components/ui/sidebar";
 import { useSession } from "next-auth/react";
 
-// This is sample data.
-const data = {
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-};
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: session, status } = useSession();
+  const pathname = usePathname();
 
   if (status === "loading") return null;
 
@@ -162,22 +34,76 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     avatar: "/default-avatar.png",
   };
 
+  const navMain = [
+    {
+      title: "Dashboard",
+      url: "/",
+      icon: LayoutDashboard,
+      isActive: pathname === "/",
+      items: [
+        { title: "Tổng quan", url: "/dashboard" },
+        { title: "Thống kê", url: "/statistics" },
+      ],
+    },
+    {
+      title: "Khóa học",
+      url: "/courses",
+      icon: BookOpen,
+      isActive: pathname.startsWith("/courses"),
+      items: [
+        { title: "Tất cả khóa học", url: "/courses" },
+        { title: "Tạo khóa học", url: "/courses/create" },
+      ],
+    },
+    {
+      title: "Bài học",
+      url: "/lessons",
+      icon: SquareStack,
+      isActive: pathname.startsWith("/lessons"),
+      items: [
+        { title: "Tất cả bài học", url: "/lessons" },
+        { title: "Tạo bài học", url: "/lessons/create" },
+      ],
+    },
+    {
+      title: "Ghi danh",
+      url: "/enrollments",
+      icon: GraduationCap,
+      isActive: pathname.startsWith("/enrollments"),
+      items: [
+        { title: "Danh sách ghi danh", url: "/enrollments" },
+      ],
+    },
+    {
+      title: "Phản hồi",
+      url: "/feedbacks",
+      icon: MessageSquare,
+      isActive: pathname.startsWith("/feedbacks"),
+      items: [
+        { title: "Tất cả phản hồi", url: "/feedbacks" },
+      ],
+    },
+    {
+      title: "Cài đặt",
+      url: "/settings",
+      icon: Settings2,
+      isActive: pathname.startsWith("/settings"),
+      items: [],
+    },
+  ];
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="flex flex-row px-2 py-4">
-        <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-        </div>
+        <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground" />
         <div className="grid flex-1 text-left text-sm leading-tight">
-          <span className="truncate font-semibold">
-            LEARNING PLATFORM
-          </span>
+          <span className="truncate font-semibold">LEARNING PLATFORM</span>
           <span className="truncate text-xs">Quản Trị Viên</span>
         </div>
-        <ChevronsUpDown className="m-auto h-5" />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavMain items={navMain} />
+        <NavProjects projects={[]} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />
