@@ -33,3 +33,15 @@ jobs:
       - name: Push to Docker Hub
         run: |
           sudo docker push voquanglinh/admin-app:latest
+
+      - name: SSH into EC2 instance and run new container
+        uses: appleboy/ssh-action@v0.1.4
+        env:
+          HOST: ${{ secrets.EC2_HOST }}
+          USERNAME: ${{ secrets.EC2_USERNAME }}
+          KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            # Pull the latest Docker image on EC2
+            sudo docker pull voquanglinh/admin-app:latest
+            # Run the new container
+            sudo docker run -d --name admin-app-container -p 3000:3000 voquanglinh/admin-app:latest
