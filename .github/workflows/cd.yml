@@ -2,7 +2,7 @@ name: CD Pipeline
 
 on:
   workflow_run:
-    workflows: ["CI Pipeline"]
+    workflows: ["CI Pipeline"] # Đảm bảo đúng tên của workflow CI
     types:
       - completed
 
@@ -11,17 +11,25 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2 # Đảm bảo rằng mã nguồn được checkout trước khi xây dựng
+
       - name: Pull Docker image
         run: sudo docker pull voquanglinh/admin-app:latest
+
       - name: Delete Old Docker container
         run: sudo docker rm -f admin-app-container || true
+
       - name: Docker Login
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        run: |
+          echo $DOCKER_PASSWORD | sudo docker login -u $DOCKER_USERNAME --password-stdin
 
       - name: Build the Docker image
         run: sudo docker build -t voquanglinh/admin-app .
+
       - name: Push to Docker Hub
-        run: docker push voquanglinh/admin-app:latest
+        run: |
+          sudo docker push voquanglinh/admin-app:latest
