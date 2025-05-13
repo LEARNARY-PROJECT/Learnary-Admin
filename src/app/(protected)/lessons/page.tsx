@@ -1,9 +1,9 @@
-import React from 'react'
+"use client";
+
+import React from "react";
 
 function LessonPage() {
-    return (
-        <div>LessonPage</div>
-    )
+  return <div>LessonPage</div>;
 }
 
-export default LessonPage
+export default LessonPage;
