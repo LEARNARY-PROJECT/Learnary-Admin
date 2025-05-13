@@ -1,0 +1,27 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Pull Docker image
+        run: sudo docker pull voquanglinh/admin-app:latest
+      - name: Delete Old Docker container
+        run: sudo docker rm -f admin-app-container || true
+      - name: Docker Login
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+      - name: Build the Docker image
+        run: docker build -t voquanglinh/admin-app .
+      - name: Push to Docker Hub
+        run: docker push voquanglinh/admin-app:latest
