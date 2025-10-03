@@ -47,7 +47,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       ],
     },
     {
-      title: "Khóa học",
+      title: "Course",
       url: "/courses",
       icon: BookOpen,
       isActive: pathname.startsWith("/courses"),
