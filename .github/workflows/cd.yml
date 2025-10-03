@@ -1,48 +1,24 @@
-name: CD Pipeline
-
+name: CD Admin
 
 on:
   workflow_run:
-    workflows: ["CI Pipeline"] # Đảm bảo đúng tên của workflow CI
+    workflows: ["CI Pipeline"]
     types:
       - completed
 
 jobs:
-  build:
-    runs-on: self-hosted
+  deploy:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2 # Đảm bảo rằng mã nguồn được checkout trước khi xây dựng
-
-      - name: Pull Docker image
-        run: sudo docker pull voquanglinh/admin-app:latest
-
-      - name: Delete Old Docker container
-        run: sudo docker rm -f admin-app-container || true
-
-      - name: Docker Login
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          echo $DOCKER_PASSWORD | sudo docker login -u $DOCKER_USERNAME --password-stdin
-
-      - name: Build the Docker image
-        run: sudo docker build -t voquanglinh/admin-app .
-
-      - name: Push to Docker Hub
-        run: |
-          sudo docker push voquanglinh/admin-app:latest
-
-      - name: SSH into EC2 instance and run new container
+      - name: SSH into EC2 and deploy admin
         uses: appleboy/ssh-action@v0.1.4
-        env:
-          HOST: ${{ secrets.EC2_HOST }}
-          USERNAME: ${{ secrets.EC2_USERNAME }}
-          KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            # Pull the latest Docker image on EC2
-            sudo docker pull voquanglinh/admin-app:latest
-            # Run the new container
-            sudo docker run -d --name admin-app-container -p 3000:3000 voquanglinh/admin-app:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/learnary-admin:latest
+            docker stop learnary_admin || true
+            docker rm learnary_admin || true
+            docker run -d --name learnary_admin -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/learnary-admin:latest

@@ -29,6 +29,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     password: credentials?.password ?? "",
                 });
 
+                // Mock authentication for development
+                if (process.env.NEXT_PUBLIC_DEV_MODE === "true") {
+                    // Default admin account for development
+                    if (email === "admin@learnary.com" && password === "admin123") {
+                        const user: ExtendedUser = {
+                            id: "1",
+                            email: "admin@learnary.com",
+                            role: "ADMIN",
+                        };
+                        console.log("Development mode: Mock user logged in:", user);
+                        return user;
+                    }
+                    
+                    throw new CredentialsSignin("Sai tài khoản hoặc mật khẩu");
+                }
+
                 try {
                     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
                         method: "POST",

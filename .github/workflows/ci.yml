@@ -21,7 +21,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build the Docker image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/admin-app:latest .
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/learnary-admin:latest .
 
     - name: Push Docker image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/admin-app:latest
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/learnary-admin:latest

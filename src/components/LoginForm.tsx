@@ -17,7 +17,6 @@ export default function LoginForm() {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         setLoading(true);
-
         const formData = new FormData(event.target as HTMLFormElement);
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
