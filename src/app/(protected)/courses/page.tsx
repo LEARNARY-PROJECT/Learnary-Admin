@@ -38,7 +38,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "react-hot-toast"
 
-// Định nghĩa type cho dữ liệu khóa học theo database schema
 type Course = {
   courses_id: string;
   category_id: string;
@@ -59,7 +58,6 @@ type Course = {
   updated_at: string;
 }
 
-// Dữ liệu mẫu theo database schema
 const data: Course[] = [
   {
     courses_id: "course_001",
@@ -538,23 +536,19 @@ function CoursePage() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
 
-  // State cho API data
+  // State 
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Fetch courses từ API
   const fetchCourses = async () => {
     try {
       setLoading(true)
       setError(null)
-
-      // Thử fetch từ API backend
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          // Thêm authorization header nếu cần
           // "Authorization": `Bearer ${token}`
         },
       })
@@ -583,7 +577,6 @@ function CoursePage() {
       setLoading(false)
     }
   }
-  // Fetch data khi component mount
   useEffect(() => {
     fetchCourses()
   }, [])

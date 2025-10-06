@@ -7,7 +7,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-
+import { Toaster } from "@/components/ui/sonner";
 import { Separator } from "@/components/ui/separator";
 import { ReactNode } from "react";
 import { AppBreadcrumb } from "@/components/features/app-breadcumb";
@@ -22,6 +22,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <AppBreadcrumb />
+            <Toaster richColors position="top-right" />
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>

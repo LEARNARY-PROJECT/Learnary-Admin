@@ -57,13 +57,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       ],
     },
     {
-      title: "Bài học",
-      url: "/lessons",
+      title: "Categories",
+      url: "/categories",
       icon: SquareStack,
-      isActive: pathname.startsWith("/lessons"),
+      isActive: pathname.startsWith("/categories"),
       items: [
-        { title: "Tất cả bài học", url: "/lessons" },
-        { title: "Tạo bài học", url: "/lessons/create" },
+        { title: "Tất cả danh mục", url: "/categories" },
+        { title: "Tạo danh mục", url: "/categories/create" },
       ],
     },
     {
@@ -98,7 +98,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader className="flex flex-row px-2 py-4">
         <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground" />
         <div className="grid flex-1 text-left text-sm leading-tight">
-          <span className="truncate font-semibold">LEARNING PLATFORM</span>
+          <span className="truncate font-semibold">LEARNARY PLATFORM</span>
           <span className="truncate text-xs">Quản Trị Viên</span>
         </div>
       </SidebarHeader>
