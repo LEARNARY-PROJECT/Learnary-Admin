@@ -8,12 +8,12 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    // ✅ Bắt buộc truyền secret rõ ràng vào đây
+    // Bắt buộc truyền secret rõ ràng vào đây
     const token = await getToken({
         req: request,
-        secret: process.env.NEXTAUTH_SECRET, // hoặc truyền trực tiếp nếu cần
+        secret: process.env.NEXTAUTH_SECRET, 
     });
-    console.log("Token in middleware:", token); // Log token để kiểm tra
+    /* console.log("Token in middleware:", token);  */
 
     // Kiểm tra role trong token
     if (!token || token.role !== "ADMIN") {

@@ -42,11 +42,11 @@ import {
 } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-/* import { toast } from "react-hot-toast" */
 import { toast } from "sonner"
-import { apiFetch } from '@/lib/api';
 import { CreateCategoryForm } from "@/components/CreateCategoryForm";
 import { ToasterConfirm } from "@/components/ToasterConfimer";
+import { useSession } from "next-auth/react";
+import { useAuthFetch } from "@/lib/authFetch";
 type Category = {
   category_id: string,
   category_name: string,
@@ -127,8 +127,11 @@ const mockData: Category[] = [
   },
 ]
 
-const loggedUserToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImE2ZTAwODQ0LWFlZmMtNGQ1OS05ZTdjLTZkNTlmYzllNWM1ZiIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NTk3MzI0ODEsImV4cCI6MTc1OTczNjA4MX0.UMRLZ2lX6ZoMvdrOioEHpPVG6z0x8i0odqnmlNEBPGE'
 function CategoriesPage() {
+  //authentication user
+  const { data: session, status } = useSession();
+  const authFetch = useAuthFetch()
+
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -139,32 +142,33 @@ function CategoriesPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [open, setOpen] = useState(false)
-
   const fetchCategories = async () => {
     try {
-      setLoading(true)
-      setError(null)
-      const res = await apiFetch("/api/categories", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${loggedUserToken}`
+      if (status === "authenticated") {
+        setLoading(true)
+        setError(null)
+        const res = await authFetch("/api/categories", {
+          method: "GET",
+        })
+        if (!res.ok) {
+          throw new Error(`HTTP error! status:${res.status}`)
         }
-      })
-      if (!res.ok) {
-        throw new Error(`HTTP error! status:${res.status}`)
+        const apiData = await res.json()
+        if (apiData.success && Array.isArray(apiData.data)) {
+          setCategory(apiData.data)
+          toast.info(`Đã tải lên ${apiData.data.length} khoá học`)
+        } else if (Array.isArray(apiData)) {
+          setCategory(apiData)
+          toast.success(`Đã tải lên ${apiData.length} khoá học`)
+        }
+        else {
+          throw new Error("Data from API is not formated")
+        }
+      } else {
+        toast.error(`Không tìm được user đang đăng nhập`)
+        throw new Error("User is not authenticated")
       }
-      const apiData = await res.json()
-      if (apiData.success && Array.isArray(apiData.data)) {
-        setCategory(apiData.data)
-        toast.info(`Đã tải lên ${apiData.data.length} khoá học`)
-      } else if (Array.isArray(apiData)) {
-        setCategory(apiData)
-        toast.success(`Đã tải lên ${apiData.length} khoá học`)
-      }
-      else {
-        throw new Error("Data from API is not formated")
-      }
+
     } catch (error) {
       console.error("Lỗi khi tải danh sách danh mục", error)
 
@@ -182,11 +186,8 @@ function CategoriesPage() {
       cancelText: "Huỷ",
       onConfirm: async () => {
         try {
-          const res = await apiFetch(`/api/categories/delete/${category_id}`, {
+          const res = await authFetch(`/api/categories/delete/${category_id}`, {
             method: "DELETE",
-            headers: {
-              "Authorization": `Bearer ${loggedUserToken}`,
-            },
           })
           const apiData = await res.json()
           if (!res.ok || !apiData.success) throw new Error(apiData.message)
@@ -329,8 +330,10 @@ function CategoriesPage() {
     </div>
   )
   useEffect(() => {
-    fetchCategories()
-  }, [])
+    if(status === "authenticated") {
+      fetchCategories()
+    }
+  }, [status])
   return (
     <div className='space-y-6'>
       <Card>
