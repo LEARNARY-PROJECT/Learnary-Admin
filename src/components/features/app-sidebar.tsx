@@ -3,11 +3,11 @@
 import * as React from "react";
 import {
   BookOpen,
-  GraduationCap,
   LayoutDashboard,
   MessageSquare,
   Settings2,
   SquareStack,
+  Users,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -63,16 +63,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       isActive: pathname.startsWith("/categories"),
       items: [
         { title: "Tất cả danh mục", url: "/categories" },
-        { title: "Tạo danh mục", url: "/categories/create" },
       ],
     },
     {
-      title: "Ghi danh",
-      url: "/enrollments",
-      icon: GraduationCap,
-      isActive: pathname.startsWith("/enrollments"),
+      title: "Users",
+      url: "/users",
+      icon: Users,
+      isActive: pathname.startsWith("/users"),
       items: [
-        { title: "Danh sách ghi danh", url: "/enrollments" },
+        { title: "Tất cả user", url: "/users" },
       ],
     },
     {
